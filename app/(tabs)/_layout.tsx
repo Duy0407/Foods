@@ -1,59 +1,110 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import React, { useState } from "react";
+import { Tabs } from "expo-router";
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useColorScheme } from "@/components/useColorScheme";
+import { HeartIcon, HistoryIcon, HomeIcon, UserIcon } from "@/assets/icons";
+import { Colors, SPACING, TYPOGRAPHY } from "@/src/styles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+interface IScreenItem {
+  key: number;
+  name: string;
+  title: string;
+  component: React.ElementType;
 }
+
+const screens: IScreenItem[] = [
+  {
+    key: 1,
+    name: "home",
+    title: "Home",
+    component: HomeIcon,
+  },
+  {
+    key: 2,
+    name: "favoritesTab",
+    title: "favoritesTab",
+    component: HeartIcon,
+  },
+  {
+    key: 2,
+    name: "profileTab",
+    title: "profileTab",
+    component: UserIcon,
+  },
+  {
+    key: 2,
+    name: "historyTab",
+    title: "historyTab",
+    component: HistoryIcon,
+  },
+];
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
+  const [isTabsVisible, setIsTabsVisible] = useState(true);
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+        tabBarActiveTintColor: Colors.mainColor,
+        tabBarInactiveTintColor: "#ADADAF",
+        headerShown: false,
+        tabBarLabelStyle: {
+          fontSize: TYPOGRAPHY.FONT_SIZE_10,
+          fontWeight: "500",
+        },
+        tabBarStyle: {
+          borderTopWidth: 0,
+          backgroundColor: "#F2F2F2",
+          elevation: 0,
+          height: SPACING.SCALE_60 + insets.bottom,
+        },
+        tabBarItemStyle: {
+          paddingBottom: SPACING.SCALE_5,
+        },
+        tabBarHideOnKeyboard: true,
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: "",
+          tabBarIcon: ({ color }) => <HomeIcon color={color} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="favoritesTab"
         options={{
-          title: 'Tab Two2',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "",
+          tabBarIcon: ({ color }) => <HeartIcon color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="profileTab"
+        options={{
+          title: "",
+          tabBarIcon: ({ color }) => <UserIcon color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="historyTab"
+        options={{
+          title: "",
+          tabBarIcon: ({ color }) => <HistoryIcon color={color} />,
+        }}
+      />
+      {/* {screens.map((item) => (
+        <Tabs.Screen
+          key={item.key}
+          name={item.name}
+          options={{
+            title: "",
+            tabBarIcon: ({ color }) => <item.component color={color} />,
+          }}
+        />
+      ))} */}
     </Tabs>
   );
 }
